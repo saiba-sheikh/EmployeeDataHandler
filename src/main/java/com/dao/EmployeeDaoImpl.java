@@ -6,6 +6,7 @@ import com.helper.DataHandler;
 import com.helper.DataHandlingFactory;
 import com.model.Employee;
 import com.model.Employees;
+import com.model.HandlerResponse;
 import com.model.exception.NoRecordFoundException;
 import com.utils.Logger;
 import com.utils.LoggerImpl;
@@ -30,15 +31,21 @@ public class EmployeeDaoImpl implements EmployeeDao<Employee> {
 		try {
 			dataHandler.deleteElement(FIELD_ID_NAME, employeeId);
 			logger.recordDeleted("Successfully deleted record Id: "+ employeeId);
+
 		} catch (NoRecordFoundException ex) {
 			logger.exceptionEncountered("No Record found for employee ID: " + employeeId);
 		}
 	}
 
 	@Override
-	public void add(Employee employee) {
+	public HandlerResponse add(Employee employee) {
+		try {
 		dataHandler.addDataNode(employee, Employee.class);
+		}catch(Exception exception) {
+			return HandlerResponse.failureResponse(exception.getMessage(), this.getClass().getName() + ": add() ");
+		}
 		logger.recordAdded("Successfully added record");
+		return HandlerResponse.successResponse();
 	}
 
 }
